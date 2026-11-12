@@ -1,0 +1,70 @@
+{
+ "model": "claude-fable-5-2",
+ "effort": "xhigh",
+ "exit_code": 0,
+ "wall_s": 2633.5,
+ "tool_free": true,
+ "tools_offered": [],
+ "mcp_servers": [],
+ "tool_uses": [],
+ "usage": {
+  "input_tokens": 4,
+  "cache_creation_input_tokens": 8544,
+  "cache_read_input_tokens": 0,
+  "output_tokens": 255073,
+  "output_tokens_details": {
+   "thinking_tokens": 250204
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 8544,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 127073,
+    "cache_read_input_tokens": 0,
+    "cache_creation_input_tokens": 4303,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 4303
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "is_error": false,
+ "edit_report": {
+  "block": true,
+  "cut_off": false,
+  "statements": 94,
+  "applied": 94,
+  "entries_written": 860,
+  "errors": [],
+  "nonzero": {
+   "W1": 795,
+   "b1": 2,
+   "W2": 32,
+   "b2": 10,
+   "W3": 10,
+   "b3": 5
+  },
+  "nonzero_total": 854,
+  "max_abs": {
+   "W1": 108.0,
+   "b1": 18.0,
+   "W2": 1000.0,
+   "b2": 610.0,
+   "W3": 15.0,
+   "b3": 60.0
+  }
+ }
+}

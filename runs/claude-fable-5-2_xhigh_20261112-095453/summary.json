@@ -1,0 +1,14 @@
+[
+ {
+  "run": "run0",
+  "status": "ok",
+  "turns": 2,
+  "output_tokens": 381373,
+  "tool_free": true,
+  "mean": 458.93,
+  "se": 5.214812688042723,
+  "episodes": 1000,
+  "max": 644.0,
+  "mean_length": 8343.332
+ }
+]
