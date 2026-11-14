@@ -94,7 +94,7 @@ def main():
     ap.add_argument("--model", default="claude-fable-5-2")
     ap.add_argument("--effort", default="xhigh", choices=["low", "medium", "high", "xhigh", "max"])
     ap.add_argument("--runs", type=int, default=1)
-    ap.add_argument("--prompt", default="prompt_breakout.txt")
+    ap.add_argument("--prompt", default="prompts/prompt_breakout.txt")
     ap.add_argument("--episodes", type=int, default=1000)
     ap.add_argument("--workers", type=int, default=os.cpu_count() or 4)
     ap.add_argument("--timeout", type=int, default=3600, help="seconds per Claude call")

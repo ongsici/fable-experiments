@@ -21,13 +21,16 @@ STMT_RE = re.compile(r"^\s*(W1|b1|W2|b2|W3|b3)\s*\[([^\]]*)\]\s*(=|\*=|\+=|-=)\s
 
 
 def last_edits_block(text):
-    blocks = re.findall(r"```edits[^\n]*\n(.*?)```", text, re.S)
-    if not blocks:  # reply cut off before the closing fence
-        m = list(re.finditer(r"```edits[^\n]*\n", text))
-        if not m:
-            return None, False
-        return text[m[-1].end():], True
-    return blocks[-1], False
+    # Read from the LAST opening fence, so an earlier block left unclosed (reply cut off,
+    # then re-sent in full on a later turn) cannot swallow the next block's opening fence.
+    m = list(re.finditer(r"```edits[^\n]*\n", text))
+    if not m:
+        return None, False
+    rest = text[m[-1].end():]
+    end = rest.find("```")
+    if end < 0:  # reply cut off before the closing fence
+        return rest, True
+    return rest[:end], False
 
 
 def strip_comment(line):

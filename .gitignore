@@ -1,4 +1,11 @@
+# Python / OS
 __pycache__/
 *.pyc
 .DS_Store
+
+# Runs: failed attempts stay local
+runs/failed/
+# Claude Code's working folder for each run (empty, used only to resume a session)
 runs/**/cwd/
+
+breakout_codes/

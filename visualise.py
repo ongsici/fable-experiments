@@ -1,7 +1,7 @@
 """Build a standalone HTML page: replay of one Breakout game plus a score histogram.
 
-    python visualize.py reference/astra_breakout.npz --label "GPT-6 Astra" -o astra.html
-    python visualize.py runs/<run>/run0/net.npz --label "Fable 5.2 run 0" -o fable_run0.html
+    python visualise.py reference/astra_breakout.npz --label "GPT-6 Astra" -o visualisation/astra.html
+    python visualise.py runs/<run>/run0/net.npz --label "Fable 5.2 run 0" -o visualisation/fable_run0.html
 """
 import argparse
 import json
@@ -109,7 +109,7 @@ draw();requestAnimationFrame(loop);
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("net")
-    ap.add_argument("-o", "--out", default="breakout_replay.html")
+    ap.add_argument("-o", "--out", default="visualisation/breakout_replay.html")
     ap.add_argument("--label", default="Network")
     ap.add_argument("--games", type=int, default=150, help="games for the histogram")
     ap.add_argument("--replay-seed", type=int, default=3)

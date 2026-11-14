@@ -1,0 +1,8 @@
+{
+ "game": "seaquest",
+ "mean": 17.872,
+ "se": 0.6017372380896032,
+ "episodes": 1000,
+ "max": 113.0,
+ "mean_length": 557.804
+}

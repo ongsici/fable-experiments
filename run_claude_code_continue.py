@@ -2,11 +2,13 @@
 (no API key), then read the weights and score the network.
 
 Each run is one fresh Claude Code conversation: no tools, no MCP servers, no skills, no
-settings files, a neutral one-line system prompt, prompt_<game>.txt on stdin
+settings files, a neutral one-line system prompt, prompts/prompt_<game>.txt on stdin
 (the published prompt for that game, unchanged).
 
-Resuming. The conversation is saved (in runs/.../runN/cwd), so a run is not lost when it
-stops early:
+Claude Code runs in an empty temp folder outside the project (path saved in state.json as
+"cwd"), so no CLAUDE.md, AGENTS.md or project auto memory is loaded into the model's context.
+
+Resuming. The conversation is saved by Claude Code, so a run is not lost when it stops early:
   * usage limit hit  -> the script waits until the limit resets, then resumes the SAME
                         conversation with "Continue." (or stops, with --no-wait).
   * reply ended with no edits block (output limit reached while thinking)
@@ -24,6 +26,7 @@ import os
 import pathlib
 import re
 import subprocess
+import tempfile
 import time
 
 import parse_edits
@@ -138,8 +141,15 @@ def wait_for_reset(ts, poll_min):
 
 def run_conversation(a, prompt, d, state):
     """Drive one conversation to an edits block (or give up). `state` is saved in state.json."""
-    cwd = d / "cwd"
-    cwd.mkdir(parents=True, exist_ok=True)               # fixed folder so --resume finds the session
+    # Claude Code runs in an empty folder OUTSIDE the project, so no CLAUDE.md/AGENTS.md or this
+    # project's auto memory can reach the model. The path is kept in state.json because --resume
+    # only finds the session from the same folder.
+    if not state.get("cwd"):
+        legacy = d / "cwd"                               # runs started before this change
+        state["cwd"] = str(legacy) if legacy.is_dir() and state.get("session_id") \
+            else tempfile.mkdtemp(prefix="claude-run-")
+    cwd = pathlib.Path(state["cwd"])
+    cwd.mkdir(parents=True, exist_ok=True)               # recreate if the OS cleaned up the temp folder
     waited = 0
     while True:
         turn = len(state["turns"])
@@ -194,6 +204,7 @@ def run_conversation(a, prompt, d, state):
 
 
 def finish(a, d, state):
+    (d / "state.json").write_text(json.dumps(state, indent=1), encoding="utf-8")  # now includes "stop"
     answer = "\n".join(state["texts"])
     (d / "answer.md").write_text(answer, encoding="utf-8")
     (d / "thinking.md").write_text("\n\n".join(state["thinking"]), encoding="utf-8")
@@ -230,8 +241,8 @@ def main():
     ap.add_argument("--effort", default="xhigh", choices=["low", "medium", "high", "xhigh", "max"])
     ap.add_argument("--runs", type=int, default=1)
     ap.add_argument("--game", default="breakout", choices=evaluate.GAMES,
-                    help="MinAtar game; picks prompt_<game>.txt and the scorer's channel map")
-    ap.add_argument("--prompt", default=None, help="override the prompt file (default: prompt_<game>.txt)")
+                    help="MinAtar game; picks prompts/prompt_<game>.txt and the scorer's channel map")
+    ap.add_argument("--prompt", default=None, help="override the prompt file (default: prompts/prompt_<game>.txt)")
     ap.add_argument("--episodes", type=int, default=1000)
     ap.add_argument("--workers", type=int, default=os.cpu_count() or 4)
     ap.add_argument("--timeout", type=int, default=3 * 3600, help="seconds per Claude call")
@@ -257,7 +268,7 @@ def main():
         print(json.dumps(finish(a, d, state), indent=1))
         return
 
-    prompt = pathlib.Path(a.prompt or f"prompt_{a.game}.txt").read_text(encoding="utf-8")
+    prompt = pathlib.Path(a.prompt or f"prompts/prompt_{a.game}.txt").read_text(encoding="utf-8")
     root = pathlib.Path(a.out) / f"{a.game}_{a.model}_{a.effort}_{time.strftime('%Y%m%d-%H%M%S')}"
     summary = []
     for i in range(a.runs):

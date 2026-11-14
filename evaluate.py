@@ -15,7 +15,7 @@ KEYS = ["actor/dense1/kernel", "actor/dense1/bias", "actor/dense2/kernel",
         "actor/dense2/bias", "actor/logits/kernel", "actor/logits/bias"]
 # Unified 6-channel input: 0 player, 1 danger, 2 reward, 3 projectile, 4 trail, 5 gauge.
 # Each unified channel is the OR of these native channels (by name, as in each game's self.channels).
-# Copied from "How the 6 channels are built" in each prompt (prompt_<game>.txt).
+# Copied from "How the 6 channels are built" in each prompt (prompts/prompt_<game>.txt).
 GAME_MAPS = {
     "breakout": {0: ["paddle"], 1: [], 2: ["brick"], 3: ["ball"], 4: ["trail"], 5: []},
     "seaquest": {0: ["sub_front", "sub_back"],

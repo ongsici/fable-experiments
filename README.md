@@ -6,9 +6,8 @@ Replication kit for "Sparks of Weight Space Programming", Experiment 5: the mode
 ## Files
 | File | What it is |
 |---|---|
-| `prompt_breakout.txt` | The exact prompt from the original run, copied unchanged from the published logs |
-| `run_claude_code.py` | Same, through Claude Code on a subscription (no API key) |
-| `run_fable.py` | API version: sends the prompt (no tools, neutral system line), saves the reply, reads the weights, scores them |
+| `prompts/` | `prompt_breakout.txt`, `prompt_seaquest.txt`, `prompt_asterix.txt`: the exact prompts from the original runs, copied unchanged from the published logs |
+| `run_claude_code.py` | Runs the prompt through Claude Code on a subscription (no API key), reads the weights, scores them |
 | `parse_edits.py` | Reader for the `edits` language (written for this kit; the original reader wasn't published) |
 | `evaluate.py` | Scorer: MinAtar 1.0.15, 1,000 episodes, softmax sampling, sticky actions 0.1, 10k-step cap |
 | `reference/` | GPT-6 Astra's reply and network, used to check the reader and the scorer |
@@ -34,7 +33,7 @@ If you have a personal `~/.claude/CLAUDE.md`, move it aside while running so it 
 A run uses about 20–60k output tokens, so 5 runs fit comfortably in normal subscription limits.
 
 ## Seaquest and Asterix
-`run_claude_code_continue.py --game {breakout,seaquest,asterix}` (default `breakout`) sends `prompt_<game>.txt`, the
+`run_claude_code_continue.py --game {breakout,seaquest,asterix}` (default `breakout`) sends `prompts/prompt_<game>.txt`, the
 published prompt for that game copied unchanged from github.com/RikiyaT/lm_understand-logs (`exp5_write_from_scratch`),
 and scores with `evaluate.py --game <game>`, which builds the 6 input channels the way that prompt describes.
 Run folders are named `runs/<game>_<model>_<effort>_<time>/`.
@@ -51,22 +50,9 @@ identical to `hand.npz`; the scorer gives Seaquest 54.3 ± 1.4 (post: 53.1) and 
 | Seaquest | 5.6 | 88.9 | 53.1 |
 | Asterix | 25.8 | 55.2 | 53.2 |
 
-## Run with the API (needs an API key)
-```bash
-pip install "minatar==1.0.15" anthropic numpy
-export ANTHROPIC_API_KEY=sk-...
-python run_fable.py --runs 5 --workers 8          # claude-fable-5-2 by default
-python run_fable.py --model claude-opus-5-5 --runs 5
-python run_fable.py --thinking-budget 0 --runs 5  # ablation: no extended thinking
-```
-Each run writes `runs/<model>_<time>/runN/`: `answer.md`, `thinking.md`, `net.npz`, `run.json`
-(tokens, stop reason, tool audit, parse report), and `score.json`.
 1,000 episodes take about 3 min on 2 cores for a strong policy (long episodes) and seconds for a weak one.
 
-If your API rejects the `thinking` parameter for this model, change `kwargs["thinking"]` in `run_fable.py`
-(for example, to whatever effort setting the model supports).
-
-Manual route: paste `prompt_breakout.txt` into claude.ai with Fable 5.2 selected, save the reply as `reply.md`, then
+Manual route: paste `prompts/prompt_breakout.txt` into claude.ai with Fable 5.2 selected, save the reply as `reply.md`, then
 `python parse_edits.py reply.md net.npz && python evaluate.py net.npz`.
 
 ## Reference scores (Breakout)
