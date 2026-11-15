@@ -1,0 +1,82 @@
+{
+ "game": "asterix",
+ "model": "claude-fable-5-2",
+ "effort": "xhigh",
+ "status": "ok",
+ "turns": 1,
+ "extra_continue_turns": 0,
+ "output_tokens_total": 134995,
+ "tool_free": true,
+ "session_id": "09027356-7a3c-4fc7-b3cb-f69afcde469f",
+ "edit_report": {
+  "block": true,
+  "cut_off": false,
+  "statements": 176,
+  "applied": 176,
+  "entries_written": 1020,
+  "errors": [],
+  "nonzero": {
+   "W1": 768,
+   "b1": 32,
+   "W2": 122,
+   "b2": 27,
+   "W3": 33,
+   "b3": 6
+  },
+  "nonzero_total": 988,
+  "max_abs": {
+   "W1": 56.0,
+   "b1": 25.0,
+   "W2": 1024.0,
+   "b2": 1016.0,
+   "W3": 225.0,
+   "b3": 2000.0
+  }
+ },
+ "turn_log": [
+  {
+   "exit_code": 0,
+   "wall_s": 1382.9,
+   "model": "claude-fable-5-2",
+   "tools_offered": [],
+   "mcp_servers": [],
+   "tool_uses": [],
+   "usage": {
+    "input_tokens": 6,
+    "cache_creation_input_tokens": 132487,
+    "cache_read_input_tokens": 4422,
+    "output_tokens": 134995,
+    "output_tokens_details": {
+     "thinking_tokens": 129179
+    },
+    "server_tool_use": {
+     "web_search_requests": 0,
+     "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 132487,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "global",
+    "iterations": [
+     {
+      "input_tokens": 4,
+      "output_tokens": 6995,
+      "cache_read_input_tokens": 4422,
+      "cache_creation_input_tokens": 128065,
+      "cache_creation": {
+       "ephemeral_5m_input_tokens": 0,
+       "ephemeral_1h_input_tokens": 128065
+      },
+      "type": "message"
+     }
+    ],
+    "speed": "standard",
+    "fallback_credit": null
+   },
+   "is_error": false,
+   "subtype": "success"
+  }
+ ]
+}

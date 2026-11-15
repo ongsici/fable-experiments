@@ -1,0 +1,15 @@
+[
+ {
+  "run": "run0",
+  "game": "asterix",
+  "status": "ok",
+  "turns": 1,
+  "output_tokens": 134995,
+  "tool_free": true,
+  "mean": 72.131,
+  "se": 1.0900367053540077,
+  "episodes": 1000,
+  "max": 220.0,
+  "mean_length": 1039.289
+ }
+]
