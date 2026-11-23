@@ -9,3 +9,8 @@ runs/failed/
 runs/**/cwd/
 
 breakout_codes/
+
+# Medium article materials (drafts, figures, GIFs, analysis scripts): kept local
+blog/
+# Earlier single-call Breakout runners: kept locally only
+old_runners/

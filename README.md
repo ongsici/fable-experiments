@@ -1,6 +1,7 @@
 # Weight-space programming with Claude Fable 5.2
 
-A replication of Experiment 5 from "Sparks of Weight Space Programming" with Claude Fable 5.2. The model is given a
+A replication of Experiment 5 from ["Sparks of Weight-Space Programming"](https://rikiyat.github.io/blog/weight-space-programming/)
+(Takehi, Teoh, Zhang and Khattab, MIT CSAIL) with Claude Fable 5.2. The model is given a
 game's source code and asked to write, from scratch, every weight of a 600-32-32-6 tanh policy network that plays
 it, with no tools, no training data, no gradients and no feedback. The network is then scored on the real game.
 
@@ -45,13 +46,13 @@ runs were single replies, so treat the comparison as approximate.
 **Excluded attempts.** 11 earlier Breakout attempts made with the first runner scripts are kept locally in
 `runs/failed/` (not in git). 10 produced no network: the usage limit was hit before or during the reply, or the reply
 spent its whole output budget thinking. One answered in a single reply (100,642 output tokens, 63 statements) and
-scored 55.6 ± 1.7; it used the earlier `run_claude_code.py`, so it is listed here rather than in the tables.
+scored 55.6 ± 1.7; it used an earlier single-call runner, so it is listed here rather than in the tables.
 
 ## How it works
 1. **Prompt.** `prompts/prompt_<game>.txt` is the published prompt for that game, copied unchanged from
    github.com/RikiyaT/lm_understand-logs (`exp5_write_from_scratch`). It contains the game's MinAtar source, the
    network's input format and the `edits` language for writing weights.
-2. **Model call.** `run_claude_code_continue.py` sends the prompt through Claude Code (`claude -p`) on a Claude
+2. **Model call.** `run_claude_code.py` sends the prompt through Claude Code (`claude -p`) on a Claude
    subscription, with no tools (`--tools ""`), no MCP servers, no settings files, no skills, and the system prompt
    replaced by the same one line the original used. Claude Code runs in an empty temporary folder outside the repo,
    so no `CLAUDE.md`, `AGENTS.md` or project memory can reach the model.
@@ -71,17 +72,17 @@ for resuming), and the raw Claude Code event logs.
 ## Validation
 Astra's published replies and networks are in `reference/`. Reading each reply with `parse_edits.py` reproduces the
 published network exactly (92/92, 122/122 and 55/55 statements for Breakout, Seaquest and Asterix). Scoring those
-networks with `evaluate.py` gives 502.9 ± 7.7, 54.3 ± 1.4 and 53.9 ± 1.0, against 517.4, 53.1 and 53.2 in the post,
-which agree within random-seed noise.
+networks with `evaluate.py` gives 502.9 ± 7.7, 54.3 ± 1.4 and 53.9 ± 1.0 (saved in
+`reference/astra_<game>_score.json`), against 517.4, 53.1 and 53.2 in the post, which agree within random-seed noise.
 
 ## Running it
 ```bash
 pip install "minatar==1.0.15" numpy
 claude                 # log in once with your Claude subscription, then exit
 
-python run_claude_code_continue.py --game breakout --runs 1      # games: breakout, seaquest, asterix
-python run_claude_code_continue.py --game seaquest --model claude-opus-5-5 --effort high
-python run_claude_code_continue.py --resume-dir runs/<folder>/run0   # finish an interrupted run
+python run_claude_code.py --game breakout --runs 1      # games: breakout, seaquest, asterix
+python run_claude_code.py --game seaquest --model claude-opus-5-5 --effort high
+python run_claude_code.py --resume-dir runs/<folder>/run0   # finish an interrupted run
 python evaluate.py runs/<folder>/run0/net.npz --game seaquest        # rescore a network
 ```
 The defaults are `claude-fable-5-2` at effort `xhigh`. Use `caffeinate -dims` on macOS to keep the machine awake
@@ -100,13 +101,12 @@ To try a game by hand, paste its prompt into claude.ai, save the reply as `reply
 | Path | What it is |
 |---|---|
 | `prompts/` | The published prompt for each game, unchanged |
-| `run_claude_code_continue.py` | Runner: sends the prompt, handles usage limits and resuming, reads and scores the weights |
+| `run_claude_code.py` | Runner: sends the prompt, handles usage limits and resuming, reads and scores the weights |
 | `parse_edits.py` | Reader for the `edits` language (written for this repo; the original reader wasn't published) |
 | `evaluate.py` | Scorer for all three games |
 | `visualise.py`, `visualisation/` | Breakout replay pages for Astra's and Fable's networks |
 | `reference/` | GPT-6 Astra's published replies and networks, used to check the reader and the scorer |
 | `runs/` | Output of every successful run |
-| `run_claude_code.py`, `run_claude_code_updated.py`, `run_claude_code_updated_2.py` | Earlier single-call Breakout runners, kept for the record; they don't handle usage limits |
 
 ## Fairness notes
 - Report the mean and spread over several runs. The original post reports a single run per game.
@@ -114,3 +114,14 @@ To try a game by hand, paste its prompt into claude.ai, save the reply as `reply
   calls.
 - Report runs that fail (no weights, or weights cut off) instead of rerunning silently.
 - The prompts contain MinAtar source code (GPL-3.0, see `LICENSE-MinAtar`).
+
+## Credits
+- **Experiment, prompts and GPT-6 Astra's networks:** Rikiya Takehi, Jayden Teoh, Alex Zhang and Omar Khattab,
+  ["Sparks of Weight-Space Programming: LLMs can natively read & write neural network weights"](https://rikiyat.github.io/blog/weight-space-programming/)
+  (MIT CSAIL, November 2026). `prompts/` and Astra's replies and networks in `reference/` are copied from
+  [RikiyaT/lm_understand-logs](https://github.com/RikiyaT/lm_understand-logs). Logs, data and networks are
+  [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) and scripts are MIT. The networks are unchanged; the
+  `astra_*_score.json` files are new scores computed with this repo's `evaluate.py`.
+- **Games:** [MinAtar](https://github.com/kenjyoung/MinAtar) by Kenny Young and Tian Tian,
+  ["MinAtar: An Atari-Inspired Testbed for Thorough and Reproducible Reinforcement Learning Experiments"](https://arxiv.org/abs/1903.03176)
+  (2019). The MinAtar source in the prompts is GPL-3.0 (see `LICENSE-MinAtar`).
